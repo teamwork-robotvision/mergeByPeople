@@ -1,10 +1,4 @@
-#include <string>
-#include "RoadSign.h"
-#include <vector>
-#include <opencv2/opencv.hpp>
-
-using namespace std;
-using namespace cv;
+#include "mainwindow.h"
 
 //合并的路标检测函数
 void RoadSign::checkRoadSign(Mat inputImage,Mat outputImage,double colorLimit[],int binaryLimit[],int erodeNum[],int dilateNum[],int closeNum[],double angleLimit[],double wid_hei[],int sizeOfArea,int someArea,int someOperate){
@@ -41,26 +35,26 @@ void RoadSign::checkRoadSign(Mat inputImage,Mat outputImage,double colorLimit[],
     //二值化
     threshold(operateMat, operateMat, binaryLimit[0],binaryLimit[1], CV_THRESH_BINARY);
 
-    namedWindow("binary",0);
-    imshow("binary", operateMat);
+//    namedWindow("binary",0);
+//    imshow("binary", operateMat);
 
     //腐蚀膨胀
     erode(operateMat, operateMat, getStructuringElement(MORPH_RECT, Size(erodeNum[0],erodeNum[1])));
 
-    namedWindow("erode",0);
-    imshow("erode", operateMat);
+//    namedWindow("erode",0);
+//    imshow("erode", operateMat);
 
     dilate(operateMat, operateMat, getStructuringElement(MORPH_RECT, Size(dilateNum[0],dilateNum[1])));
 
-    namedWindow("dilate",0);
-    imshow("dilate", operateMat);
+//    namedWindow("dilate",0);
+//    imshow("dilate", operateMat);
 
     //闭运算
     Mat kernel = getStructuringElement(MORPH_RECT, Size(closeNum[0],closeNum[1]));
     morphologyEx(operateMat, operateMat, MORPH_CLOSE, kernel);
 
-    namedWindow("close",0);
-    imshow("close", operateMat);
+//    namedWindow("close",0);
+//    imshow("close", operateMat);
 
     /***************************添加感兴趣区域*****************/
     if(someArea) {
@@ -78,7 +72,7 @@ void RoadSign::checkRoadSign(Mat inputImage,Mat outputImage,double colorLimit[],
 
         // 创建二进制多边形，填充多边形获取感兴趣区域
         cv::fillConvexPoly(operateMat, pts, 4, cv::Scalar(0, 0, 0));
-        imshow("blue", operateMat);
+        //imshow("blue", operateMat);
     }
     /*************************************************************/
 

@@ -46,44 +46,38 @@
      <widget class="QWidget" name="widget" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="7,3">
        <item>
-        <widget class="QFrame" name="outputFrame">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+        <widget class="QLabel" name="outputImage">
+         <property name="minimumSize">
+          <size>
+           <width>370</width>
+           <height>231</height>
+          </size>
          </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+         <property name="text">
+          <string>non-select a video</string>
          </property>
         </widget>
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <widget class="QFrame" name="roadsSign0">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+          <widget class="QLabel" name="roadSign0">
+           <property name="text">
+            <string>road sign 0</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QFrame" name="roadSign1">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+          <widget class="QLabel" name="roadSign1">
+           <property name="text">
+            <string>road sign 1</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QFrame" name="roadSign2">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+          <widget class="QLabel" name="roadSign2">
+           <property name="text">
+            <string>road sign 2</string>
            </property>
           </widget>
          </item>
@@ -93,7 +87,7 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2,0,2">
+     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,5">
       <property name="rightMargin">
        <number>5</number>
       </property>
@@ -105,7 +99,7 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="3,3,3">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
@@ -142,26 +136,26 @@
            </item>
           </layout>
          </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QPushButton" name="pause">
+             <property name="text">
+              <string>pause/start</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="stop">
+             <property name="text">
+              <string>stop</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
         </layout>
        </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QPushButton" name="pause">
-          <property name="text">
-           <string>pause</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="stop">
-          <property name="text">
-           <string>stop</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </item>
       <item>
        <widget class="QTextEdit" name="console">
@@ -170,6 +164,17 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <italic>false</italic>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;console&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="whatsThis">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>

@@ -1,12 +1,5 @@
 #include "mainwindow.h"
-#include "QFileDialog"
-#include "QMessageBox"
-#include "ui_mainwindow.h"
-#include <string>
-#include <opencv.hpp>
-#include "RoadSign.h"
-using namespace cv;
-using namespace std;
+extern sem_t semKey;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -22,6 +15,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_browse_clicked()
 {
+    if(choice>0){
+        QMessageBox::information(nullptr,tr("warning"), tr("please stop the video-check program"));
+        return;
+    }
+
+    ui->console->append(tr("chose the browse\n"));
+    ui->console->moveCursor(QTextCursor::End);
+
     //定义文件对话框类
     QFileDialog *fileDialog = new QFileDialog();
     //定义文件对话框标题
@@ -36,14 +37,24 @@ void MainWindow::on_browse_clicked()
     fileDialog->setViewMode(QFileDialog::Detail);
     if(fileDialog->exec() == QDialog::Accepted) {
         QString path = fileDialog->selectedFiles()[0];
+        videoPath=path.toStdString();
         //QMessageBox::information(nullptr, tr("Path"), tr("You selected ") + path);
         ui->console->append(tr("You selected ---> ") + path + tr("\n"));
         ui->console->moveCursor(QTextCursor::End);
 
-        ui->console->append(tr("please click the button called start to run the program\n"));
+        ui->console->append(tr("please coose a mode\n"));
         ui->console->moveCursor(QTextCursor::End);
+        choice=0;
+        cv::VideoCapture cap(videoPath);
+        Mat frame;
+        cap.read(frame);
+        cvtColor( frame, frame, CV_BGR2RGB);
+        QImage image = QImage( (const unsigned char*)(frame.data), frame.cols, frame.rows, QImage::Format_RGB888 );
+        ui->outputImage->setPixmap( QPixmap::fromImage(image.scaled(ui->outputImage->width(),ui->outputImage->height())));
+        //ui->outputImage->resize(370,200);
+        ui->outputImage->show();
     } else {
-        QMessageBox::information(nullptr, tr("Path"), tr("You didn't select any files."));
+        QMessageBox::information(nullptr, tr("warning"), tr("You didn't select any files"));
     }
 }
 
@@ -96,4 +107,161 @@ void MainWindow::signCheck(Mat frame){
 
 void MainWindow::laneCheck(Mat frame){
 
+}
+
+MainWindow* MainWindow::ptr=nullptr;
+
+void MainWindow::videoCheck(MainWindow *p){
+    cv::VideoCapture cap(p->videoPath);            //读入视频
+    if (!cap.isOpened()){
+        QMessageBox::information(nullptr, tr("Path"), tr("can not open the video"));
+        return;
+    }
+
+    //读取视频帧数
+    double rate = cap.get(CV_CAP_PROP_FPS);
+    // 获取视频帧的尺寸
+    int width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
+    int height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+
+    //根据打开视频的参数初始化输出视频格式
+    cv::VideoWriter lane_detor("./detect_out/lane_detected_orignal.mp4", CV_FOURCC('m', 'p', '4', 'v'), rate, cv::Size(width, height));
+
+    cv::Mat frame;
+    while (1){
+        cout<<p->choice<<endl;
+        //读取视频
+        if (!cap.read(frame)||p->choice<1)
+            break;
+        switch(p->choice){
+        case 1:
+            p->laneCheck(frame);
+            break;
+        case 2:
+            p->signCheck(frame);
+            break;
+        case 3:
+            p->signCheck(frame);
+            p->laneCheck(frame);
+            break;
+        case 4:
+            while(p->choice==4){
+                cout<<"sleep"<<endl;
+                this_thread::sleep_for(std::chrono::milliseconds(500));
+            }
+            break;
+        default:
+            cout<<p->choice<<"|"<<endl;
+            return;
+        }
+        //QImage image(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
+        //QGraphicsScene *scene=new QGraphicsScene();
+
+        cvtColor( frame, frame, CV_BGR2RGB );
+        QImage image = QImage( (const unsigned char*)(frame.data), frame.cols, frame.rows, QImage::Format_RGB888 );
+        p->ui->outputImage->setPixmap( QPixmap::fromImage(image.scaled(p->ui->outputImage->width(),p->ui->outputImage->height())));
+        //p->ui->outputImage->resize(100,100);
+        p->ui->outputImage->show();
+    }
+    cout<<p->choice<<"|"<<endl;
+}
+
+void MainWindow::changeChoice(int operation)
+{
+    pthread_mutex_lock(&choiceKey);
+    choice=operation;
+    pthread_mutex_unlock(&choiceKey);
+}
+
+void MainWindow::on_lane_only_clicked()
+{
+    if(choice<0){
+        QMessageBox::information(nullptr,tr("warning"),tr("please choose a video first"));
+        return;
+    }
+
+    if(choice==0){
+        changeChoice(1);
+        sem_post(&semKey);
+        //QtConcurrent::run(MainWindow::videoCheck,MainWindow::ptr);
+    }
+
+    ui->console->append(tr("chose the lane_only\n"));
+    ui->console->moveCursor(QTextCursor::End);
+    changeChoice(1);
+}
+
+void MainWindow::on_pause_clicked()
+{
+    if(choice<1){
+        QMessageBox::information(nullptr,tr("warning"),tr("please choose a video and mode"));
+        return;
+    }
+
+    if(choice==4){
+        ui->console->append(tr("chose the start\n"));
+        ui->console->moveCursor(QTextCursor::End);
+        changeChoice(choiceSave);
+        return;
+    }
+    ui->console->append(tr("chose the pause\n"));
+    ui->console->moveCursor(QTextCursor::End);
+    choiceSave=choice;
+    changeChoice(4);
+}
+
+void MainWindow::on_sign_only_clicked()
+{
+    if(choice<0){
+        QMessageBox::information(nullptr,tr("warning"),tr("please choose a video and mode"));
+        return;
+    }
+
+    if(choice==0){
+        changeChoice(2);
+        sem_post(&semKey);
+        //QtConcurrent::run(MainWindow::videoCheck,MainWindow::ptr);
+    }
+
+    ui->console->append(tr("chose the sign_only\n"));
+    ui->console->moveCursor(QTextCursor::End);
+    changeChoice(2);
+}
+
+void MainWindow::on_both_clicked()
+{
+    if(choice<0){
+        QMessageBox::information(nullptr,tr("warning"),tr("please choose a video and mode"));
+        return;
+    }
+
+    if(choice==0){
+        changeChoice(3);
+        sem_post(&semKey);
+        //QtConcurrent::run(MainWindow::videoCheck,MainWindow::ptr);
+    }
+
+    ui->console->append(tr("chose the both\n"));
+    ui->console->moveCursor(QTextCursor::End);
+    changeChoice(3);
+}
+
+void MainWindow::on_stop_clicked()
+{
+    if(choice<1){
+        QMessageBox::information(nullptr,tr("warning"),tr("please choose a video and mode"));
+        return;
+    }
+
+    ui->console->append(tr("chose the stop\n"));
+    ui->console->moveCursor(QTextCursor::End);
+    changeChoice(-1);
+}
+
+int MainWindow::getChoice(){
+    return choice;
+}
+
+void MainWindow::setChoice(int cho){
+    choice=cho;
 }
