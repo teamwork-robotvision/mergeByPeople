@@ -3,7 +3,7 @@
 //合并的路标检测函数
 void RoadSign::checkRoadSign(Mat inputImage,Mat outputImage,double colorLimit[],int binaryLimit[],int erodeNum[],int dilateNum[],int closeNum[],double angleLimit[],double wid_hei[],int sizeOfArea,int someArea,int someOperate){
     Mat hsv,operateMat;;
-    Mat operateImage = inputImage.clone();
+    Mat operateImage = inputImage.clone(),roiImage=inputImage.clone();
 
     //增加对比度和饱和度
     //    double alpha = 1.2; //1--3
@@ -103,7 +103,7 @@ void RoadSign::checkRoadSign(Mat inputImage,Mat outputImage,double colorLimit[],
                     //rectangle(outputImage,box[0],box[2],Scalar(0,255,255),2);
 
                     Rect rect=boundingRect(contours.at(index));
-                    Mat ROI=outputImage(rect).clone();
+                    Mat ROI=roiImage(rect);
                     cvtColor(ROI,ROI,CV_BGR2RGB);
                     QImage image = QImage( (const unsigned char*)(ROI.data), ROI.cols, ROI.rows, QImage::Format_RGB888 );
                     MainWindow *p=MainWindow::ptr;

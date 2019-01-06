@@ -31,14 +31,15 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    static void videoCheck(MainWindow *p);
-    void signCheck(Mat frame);
-    void laneCheck(Mat frame);
+//    static void videoCheck(MainWindow *p);
+//    void signCheck(Mat frame);
+//    void laneCheck(Mat frame);
     void changeChoice(int operation=0);
     static MainWindow *ptr;
     int getChoice();
     void setChoice(int cho);
     Ui::MainWindow* getUI();
+    string getVideoPath();
 
 private slots:
     void on_browse_clicked();
@@ -59,7 +60,6 @@ private:
     int choice=-1;
     int choiceSave=0;
     std::string videoPath=".";
-    RoadSign roadsign;
     pthread_mutex_t choiceKey=PTHREAD_MUTEX_INITIALIZER;
 };
 #endif // MAINWINDOW_H

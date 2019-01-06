@@ -1,13 +1,13 @@
-#include "mainwindow.h"
 #include <QApplication>
 #include <thread>
+#include "function.h"
+
 sem_t semKey;
 
 void runVideoCheck(MainWindow *p){
-    int sign=0;
     while(p->getChoice()!=-2){
         sem_wait(&semKey);
-        MainWindow::videoCheck(MainWindow::ptr);
+        videoCheck(MainWindow::ptr);
     }
 }
 
