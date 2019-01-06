@@ -76,8 +76,6 @@ void RoadSign::checkRoadSign(Mat inputImage,Mat outputImage,double colorLimit[],
     }
     /*************************************************************/
 
-    char str[]={"/home/zhaobin/ROI0.jpg"};
-
     //查找轮廓并显示
     vector<vector<Point>> contours;
     vector<Vec4i> hierarchy;

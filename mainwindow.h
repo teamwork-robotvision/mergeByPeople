@@ -37,6 +37,7 @@ public:
     static MainWindow *ptr;
     int getChoice();
     void setChoice(int cho);
+    Ui::MainWindow* getUI();
 
 private slots:
     void on_browse_clicked();

@@ -60,44 +60,44 @@ void MainWindow::on_browse_clicked()
 
 void MainWindow::signCheck(Mat frame){
     //红色路标检测参数
-    double colorLimit_red[]={156,43,46,180,255,255};
+    double colorLimit_red[]={156.7,43,46,180,255,255};
     int binaryLimit_red[]={235,255};
     int erodeNum_red[]={3,3};
     int dilateNum_red[]={5,5};
     int closeNum_red[]={10,10};
     double angleLimit_red[]={-90/CV_PI,90/CV_PI};
-    double wid_hei_red[]={1,5};
-    int sizeOfArea_red=5000;
+    double wid_hei_red[]={0.9,1.5};
+    int sizeOfArea_red=2000;
 
     //黄色路标检测参数
-    double colorLimit_yellow[]={20,43,46,24,255,255};
+    double colorLimit_yellow[]={22.9,43,46,24,255,255};
     int binaryLimit_yellow[]={220,255};
     int erodeNum_yellow[]={3,3};
     int dilateNum_yellow[]={5,5};
     int closeNum_yellow[]={3,3};
-    double angleLimit_yellow[]={-50/CV_PI,50/CV_PI};
-    double wid_hei_yellow[]={0.9,3.1};
-    int sizeOfArea_yellow=3500;
+    double angleLimit_yellow[]={-80/CV_PI,80/CV_PI};
+    double wid_hei_yellow[]={0.9,3};
+    int sizeOfArea_yellow=2000;
 
     //蓝色路标检测参数
-    double colorLimit_blue[]={102.5,43,46,124,255,255};
-    int binaryLimit_blue[]={235,255};
+    double colorLimit_blue[]={100,43,46,124,255,255};
+    int binaryLimit_blue[]={220,255};
     int erodeNum_blue[]={3,3};
     int dilateNum_blue[]={7,7};
     int closeNum_blue[]={10,10};
-    double angleLimit_blue[]={-90/CV_PI,90/CV_PI};
+    double angleLimit_blue[]={-110/CV_PI,110/CV_PI};
     double wid_hei_blue[]={0.91,4.5};
-    int sizeOfArea_blue=50000;
+    int sizeOfArea_blue=30000;
 
     //绿色路标检测参数
-    double colorLimit_green[]={96,43,46,99,255,255};
-    int binaryLimit_green[]={235,255};
+    double colorLimit_green[]={97,43,46,99,255,255};
+    int binaryLimit_green[]={225,255};
     int erodeNum_green[]={3,3};
     int dilateNum_green[]={7,7};
     int closeNum_green[]={10,10};
-    double angleLimit_green[]={-30/CV_PI,30/CV_PI};
-    double wid_hei_green[]={1,1};
-    int sizeOfArea_green=3500;
+    double angleLimit_green[]={-90/CV_PI,90/CV_PI};
+    double wid_hei_green[]={0.7,1.7};
+    int sizeOfArea_green=2000;
 
     roadsign.checkRoadSign(frame,frame,colorLimit_red,binaryLimit_red,erodeNum_red,dilateNum_red,closeNum_red,angleLimit_red,wid_hei_red,sizeOfArea_red);
     roadsign.checkRoadSign(frame,frame,colorLimit_yellow,binaryLimit_yellow,erodeNum_yellow,dilateNum_yellow,closeNum_yellow,angleLimit_yellow,wid_hei_yellow,sizeOfArea_yellow);
@@ -110,6 +110,10 @@ void MainWindow::laneCheck(Mat frame){
 }
 
 MainWindow* MainWindow::ptr=nullptr;
+
+Ui::MainWindow* MainWindow::getUI(){
+    return ui;
+}
 
 void MainWindow::videoCheck(MainWindow *p){
     cv::VideoCapture cap(p->videoPath);            //读入视频
