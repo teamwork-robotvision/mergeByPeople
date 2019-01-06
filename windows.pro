@@ -38,9 +38,11 @@ HEADERS += \
 FORMS += \
         mainwindow.ui\
 
-INCLUDEPATH += /usr/local/include \
-                /usr/local/include/opencv \
-                /usr/local/include/opencv2
+INCLUDEPATH += \
+        /usr/local/include \
+        /usr/local/include/opencv \
+        /usr/local/include/opencv2 \
+        E:\code\opencv\opencv\build\include\opencv2
 
 LIBS +=/usr/local/lib/libopencv_highgui.so \
         /usr/local/lib/libopencv_core.so    \
