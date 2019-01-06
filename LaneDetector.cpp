@@ -268,13 +268,13 @@ int LaneDetector::plotLane(cv::Mat inputImage, std::vector<cv::Point> lane, std:
     cv::Mat output;
 
     // 创建清晰的多边形以更好地显示通道
-    inputImage.copyTo(output);
-    poly_points.push_back(lane[2]);
-    poly_points.push_back(lane[0]);
-    poly_points.push_back(lane[1]);
-    poly_points.push_back(lane[3]);
-    cv::fillConvexPoly(output, poly_points, cv::Scalar(0, 0, 255), CV_AA, 0);
-    cv::addWeighted(output, 0.3, inputImage, 1.0 - 0.3, 0, inputImage);
+//    inputImage.copyTo(output);
+//    poly_points.push_back(lane[2]);
+//    poly_points.push_back(lane[0]);
+//    poly_points.push_back(lane[1]);
+//    poly_points.push_back(lane[3]);
+//    cv::fillConvexPoly(output, poly_points, cv::Scalar(0, 0, 255), CV_AA, 0);
+//    cv::addWeighted(output, 0.3, inputImage, 1.0 - 0.3, 0, inputImage);
 
     // 绘制车道边界的两条线
     cv::line(inputImage, lane[0], lane[1], cv::Scalar(0, 255, 255), 5, CV_AA);
