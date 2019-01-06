@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include <thread>
 extern sem_t semKey;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -106,6 +107,56 @@ void MainWindow::signCheck(Mat frame){
 }
 
 void MainWindow::laneCheck(Mat frame){
+    LaneDetector lanedetector;          // 创建车道检测类
+
+       cv::Mat selected_img;
+       cv::Mat img_denoise;
+       cv::Mat img_edges;
+       cv::Mat img_mask;
+       cv::Mat img_wrape;
+       cv::Mat M;
+       cv::Mat img_lines;
+       std::vector<cv::Vec4i> lines;
+       std::vector<std::vector<cv::Vec4i> > left_right_lines;
+       std::vector<cv::Point> lane;
+       std::string turn;
+       int flag_plot = -1;
+       int i = 0;
+       //选取颜色区域
+              selected_img=lanedetector.selectColor(frame);
+
+              // 高斯滤波
+              img_denoise = lanedetector.deNoise(selected_img);
+
+              // 边缘检测
+              img_edges = lanedetector.edgeDetector(img_denoise);
+
+              // 获得ROI(感兴趣区域）＋　滤波
+              img_mask = lanedetector.mask(img_edges);
+              img_mask=lanedetector.deNoise(img_mask);
+              cv::Mat temp=img_mask.clone();
+
+              // 在处理后的图像中获得霍夫线
+              lines = lanedetector.houghLines(img_mask);
+
+              if (!lines.empty())
+              {
+                  // 检测车道是转向
+                  left_right_lines = lanedetector.lineSeparation(lines, img_edges);
+
+                  // 应用回归在车道的每一侧获得唯一的线
+                  lane = lanedetector.regression(left_right_lines, frame);
+
+                  // 通过确定线的消失点来预测转弯
+                  turn = lanedetector.predictTurn();
+
+                  // 在视频中显示方向
+                  flag_plot = lanedetector.plotLane(frame, lane, turn);
+                  i += 1;
+              }
+              else {
+                  flag_plot = -1;
+              }
 
 }
 
@@ -139,7 +190,7 @@ void MainWindow::videoCheck(MainWindow *p){
             break;
         switch(p->choice){
         case 1:
-            p->laneCheck(frame);
+            p->laneCheck(frame);                        
             break;
         case 2:
             p->signCheck(frame);
@@ -156,18 +207,22 @@ void MainWindow::videoCheck(MainWindow *p){
             break;
         default:
             cout<<p->choice<<"|"<<endl;
+            p->choice=-1;
             return;
         }
         //QImage image(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
         //QGraphicsScene *scene=new QGraphicsScene();
 
         cvtColor( frame, frame, CV_BGR2RGB );
+
         QImage image = QImage( (const unsigned char*)(frame.data), frame.cols, frame.rows, QImage::Format_RGB888 );
         p->ui->outputImage->setPixmap( QPixmap::fromImage(image.scaled(p->ui->outputImage->width(),p->ui->outputImage->height())));
         //p->ui->outputImage->resize(100,100);
         p->ui->outputImage->show();
+        this_thread::sleep_for(chrono::milliseconds(50));
     }
     cout<<p->choice<<"|"<<endl;
+    p->choice=-1;
 }
 
 void MainWindow::changeChoice(int operation)

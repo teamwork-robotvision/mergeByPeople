@@ -15,6 +15,7 @@
 #include <QImage>
 #include <vector>
 #include <semaphore.h>
+#include <LaneDetector.h>
 
 using namespace std;
 using namespace cv;
